@@ -20,37 +20,36 @@ def main():
             case "login":
                 user, passw = login()
                 decryptt(user, passw)
-                print("____Menu____")
-                match str(input("-Show saved passwords\n--Create new password\n(show/create)")).lower():
-                    case "show":
-                        show(user)
-                        encrypt_file(user, passw)
+                try:
+                    print("____Menu____")
+                    match str(input("-Show saved passwords\n--Create new password\n(show/create)")).lower():
+                        case "show":
+                            show(user)
 
-                    case "create":
-                        usr = str(input("What should your username be? "))
-                        leng = int(input("how many characters should your password be?(e.g. 12) "))
-                        strength = str(input("How strong should your password be?(weak/medium/strong) ")).lower()
-                        if strength == "weak":
-                            password = generate(weak=True, length=leng)
-                        elif strength == "medium":
-                            password = generate(medium=True, length=leng)
-                        elif strength == "strong":
-                            password = generate(strong=True, length=leng)
-                        else:
-                            encrypt_file(user, passw)
-                            sys.exit("Wrong type of input was used.\nExiting program...")
-                        desc = str(input("Add a description for your password(optional): "))
-                        if desc == "":
-                            desc = "None"
-                        add_to_file(file=user, user=usr, password=password, description=desc)
-                        encrypt_file(user, passw)
+                        case "create":
+                            usr = str(input("What should your username be? "))
+                            leng = int(input("how many characters should your password be?(e.g. 12) "))
+                            strength = str(input("How strong should your password be?(weak/medium/strong) ")).lower()
+                            if strength == "weak":
+                                password = generate(weak=True, length=leng)
+                            elif strength == "medium":
+                                password = generate(medium=True, length=leng)
+                            elif strength == "strong":
+                                password = generate(strong=True, length=leng)
+                            else:
+                                sys.exit("Wrong type of input was used.\nExiting program...")
+                            desc = str(input("Add a description for your password(optional): "))
+                            if desc == "":
+                                desc = "None"
+                            add_to_file(file=user, user=usr, password=password, description=desc)
+                finally:
+                    encrypt_file(user, passw)
 
             case "signup":
                 signup()
 
     except ValueError:
         sys.exit("Wrong type of input was used.\nExiting program...")
-        # sys.exit("ValueError")
 
 
 
@@ -107,7 +106,8 @@ def login():
         if not os.path.exists(f"{log_user_name}.csv"):
             if str(input("User file doesn't exit! do you want to create new file?(yes/no) ")).lower() in ['yes', 'y']:
                 open(f"{log_user_name}.csv", "a").close()
-                print("New user data file was created! relaunch program to use it")
+                encrypt_file(log_user_name, log_password)
+                print("New user data file was created!")
             else:
                 sys.exit(f"Move or copy original user data file {log_user_name}.csv to current folder and launch program again")
         return log_user_name , log_password
@@ -165,6 +165,7 @@ def signup():
         file.close()
     print(f"User created!")
     open(f"{sign_user_name}.csv", "a").close()
+    encrypt_file(sign_user_name, sign_password)
     sys.exit("Now relunch program and try logging in with your new username and password.")
 
 

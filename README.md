@@ -8,7 +8,7 @@ This project has not been written by A.I.
 ## Features
 
 *  **User Authentication** – Sign up and log in with secure credential validation.
-*  **AES Encryption** – Passwords are encrypted using strong cryptographic techniques.
+*  **Authenticated Encryption** – Passwords are protected with Fernet authenticated encryption.
 *  **Password Generator** – Create passwords of custom length and strength (weak, medium, strong).
 *  **Per-User Encrypted Storage** – Each user has a separate `.csv` file, encrypted with their own password.
 *  **Tabular Display** – View stored credentials in a clean, structured table using `tabulate`.
@@ -31,7 +31,7 @@ pip install -r requirements.txt
 ```
 
 
-Compatible with **Python 3.6+**.
+Compatible with **Python 3.10+**.
 
 ---
 
@@ -69,7 +69,7 @@ project/
 
 ### Encryption
 
-* **Algorithm**: AES (via `cryptography.Fernet`)
+* **Algorithm**: Fernet authenticated encryption (AES and HMAC, via `cryptography.Fernet`)
 * **Key Derivation**: PBKDF2-HMAC-SHA256 with 1,500,000 iterations
 * **Salt**: Static (for simplicity and lack of options; can be improved for production)
 
@@ -93,7 +93,10 @@ After loging in choose:
 * `1. Show saved passwords` with `show`
 * `2. Create new password` with `create`
 
-Passwords are encrypted on exit.
+After a successful login, the user's file is decrypted only for the active menu operation.
+It is re-encrypted in a `finally` block whenever that operation ends, including normal
+completion, invalid input, `ValueError`, `Ctrl+C`, end-of-file input, and unexpected errors.
+If decryption fails, the file remains encrypted and the session does not attempt to overwrite it.
 
 ---
 
@@ -101,6 +104,7 @@ Passwords are encrypted on exit.
 
 * If you forget your login password, your encrypted data **cannot** be recovered.
 * All data is stored **locally** in the script directory.
-* For Windows users, change `os.system("clear")` in line 99 and line 146 to `os.system("cls")`.
+* The program currently uses `clear` to clear the console; Windows users can replace it with `cls`.
+* A new user's storage file is encrypted immediately, even before the first login.
 
 ---
