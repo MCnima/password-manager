@@ -231,20 +231,23 @@ def show(name):
     tabulate library. Returns None
     """
     ls = []
-    head = ["Username", "Passwprd", "Description"]
+    head = ["Website / Service", "Username", "Password", "Description"]
     with open(f"{name}.csv") as file:
         reader = csv.reader(file)
-        for a, b, c in reader:
-            ls.append([a, b, c])
+        for row in reader:
+            if len(row) == 4:
+                ls.append(row)
+            elif len(row) == 3:
+                ls.append(["Legacy", row[0], row[1], row[2]])
         file.close()
     print(tabulate(ls, head, tablefmt="grid"))
 
 
-def add_to_file(file, user, password, description):
+def add_to_file(file, user, password, description, service=None):
     """
     Gets newly created password username and a description for it and writes it in givin file.
     """
-    ls = [user, password, description]
+    ls = [service, user, password, description] if service else [user, password, description]
     with open(f"{file}.csv", "a") as f:
         writer = csv.writer(f)
         writer.writerow(ls)
@@ -252,7 +255,11 @@ def add_to_file(file, user, password, description):
 
 
 if __name__ == "__main__":
-    main()
+    if "--cli" in sys.argv:
+        main()
+    else:
+        from pyqt_gui import launch
+        launch()
     # print(hash("nima", "salt"))
     # encrypt_file("nima", "1234")
     # decrypt("nima", "1234")
