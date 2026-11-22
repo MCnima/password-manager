@@ -196,6 +196,10 @@ class PasswordManagerWindow(QMainWindow):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.table.setMouseTracking(True)
+        self.table.cellClicked.connect(self.reveal_password_cell)
+        self.table.cellEntered.connect(self.hover_password_cell)
+        self.table.viewport().setMouseTracking(True)
         layout.addWidget(self.table)
         return page
 
@@ -262,15 +266,44 @@ class PasswordManagerWindow(QMainWindow):
         if not self.current_user:
             return
         with open(f"{self.current_user}.csv", "r", newline="", encoding="utf-8") as data_file:
-            for row in csv.reader(data_file):
+            for csv_row, row in enumerate(csv.reader(data_file)):
                 if len(row) not in (3, 4):
                     continue
                 row_number = self.table.rowCount()
                 self.table.insertRow(row_number)
                 display_row = row if len(row) == 4 else ["Legacy", row[0], row[1], row[2]]
                 for column, value in enumerate(display_row):
-                    self.table.setItem(row_number, column, QTableWidgetItem(value))
+                    item = QTableWidgetItem(value)
+                    if column == 2:
+                        item.setText("\u2022" * min(12, len(value)))
+                        item.setData(Qt.ItemDataRole.UserRole, value)
+                        item.setData(Qt.ItemDataRole.UserRole + 1, csv_row)
+                        item.setToolTip("Click or hover to reveal; click elsewhere to hide")
+                    self.table.setItem(row_number, column, item)
         self.filter_table()
+
+    def reveal_password_cell(self, row, column):
+        if column != 2:
+            self.hide_passwords()
+            return
+        item = self.table.item(row, column)
+        if item:
+            item.setText(item.data(Qt.ItemDataRole.UserRole))
+            self.statusBar().showMessage("Password revealed")
+
+    def hover_password_cell(self, row, column):
+        self.hide_passwords()
+        if column == 2:
+            item = self.table.item(row, column)
+            if item:
+                item.setText(item.data(Qt.ItemDataRole.UserRole))
+
+    def hide_passwords(self):
+        for row in range(self.table.rowCount()):
+            item = self.table.item(row, 2)
+            if item:
+                secret = item.data(Qt.ItemDataRole.UserRole)
+                item.setText("\u2022" * min(12, len(secret)))
 
     def filter_table(self):
         query = self.search_input.text().lower()
@@ -308,7 +341,7 @@ class PasswordManagerWindow(QMainWindow):
             return
         password_item = self.table.item(row, 2)
         if password_item:
-            QApplication.clipboard().setText(password_item.text())
+            QApplication.clipboard().setText(password_item.data(Qt.ItemDataRole.UserRole))
             self.statusBar().showMessage("Password copied")
 
     def delete_selected(self):
@@ -327,7 +360,11 @@ class PasswordManagerWindow(QMainWindow):
         rows = []
         with open(f"{self.current_user}.csv", "r", newline="", encoding="utf-8") as data_file:
             rows = list(csv.reader(data_file))
-        del rows[row]
+        password_item = self.table.item(row, 2)
+        csv_row = password_item.data(Qt.ItemDataRole.UserRole + 1) if password_item else None
+        if csv_row is None:
+            return
+        del rows[csv_row]
         with open(f"{self.current_user}.csv", "w", newline="", encoding="utf-8") as data_file:
             csv.writer(data_file).writerows(rows)
         self.refresh_table()

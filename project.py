@@ -122,11 +122,11 @@ def manage_login_pass(user, password):
     """
     is_valid = False
     pass_list = []
-    with open("data.csv") as file:
+    with open("data.csv", newline="", encoding="utf-8") as file:
         reader = csv.reader(file)
-        for a, b in reader:
-            pass_list.append([a, b])
-        file.close()
+        for row in reader:
+            if len(row) == 2:
+                pass_list.append(row)
     for usr in pass_list:
         if usr[0] == user:
             hashed_password = hash(password, user)

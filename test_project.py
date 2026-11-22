@@ -1,6 +1,11 @@
 import unittest
+import csv
+import os
+import tempfile
 from unittest.mock import patch
-
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication
+import pyqt_gui
 import project
 
 
@@ -43,6 +48,46 @@ class EncryptionExitTests(unittest.TestCase):
                 project.main()
 
         encrypt_file.assert_not_called()
+
+
+class GuiCrashTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_password_is_masked_with_user_role_secret(self):
+        window = pyqt_gui.PasswordManagerWindow()
+        with tempfile.TemporaryDirectory() as directory:
+            old_cwd = os.getcwd()
+            os.chdir(directory)
+            try:
+                window.current_user = "sample"
+                window.current_password = "secret"
+                with open("sample.csv", "w", newline="", encoding="utf-8") as vault:
+                    csv.writer(vault).writerows([
+                        ["first-service", "first-user", "first-secret", "old"],
+                        ["second-service", "second-user", "second-secret", "new"],
+                    ])
+                window.refresh_table()
+                first = window.table.item(0, 2)
+                second = window.table.item(1, 2)
+                self.assertEqual(first.data(Qt.ItemDataRole.UserRole), "first-secret")
+                self.assertEqual(first.text(), "\u2022" * 12)
+                self.assertEqual(second.data(Qt.ItemDataRole.UserRole + 1), 1)
+            finally:
+                os.chdir(old_cwd)
+
+    def test_malformed_data_csv_does_not_raise(self):
+        with tempfile.TemporaryDirectory() as directory:
+            old_cwd = os.getcwd()
+            os.chdir(directory)
+            try:
+                with open("data.csv", "w", newline="", encoding="utf-8") as data:
+                    data.write("broken,row,with,extra,columns\n")
+                self.assertFalse(project.manage_login_pass("missing", "wrong"))
+            finally:
+                os.chdir(old_cwd)
 
 
 if __name__ == "__main__":

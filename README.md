@@ -16,6 +16,8 @@ locally in encrypted per-user vault files.
 *  **Tabular Display** – View stored credentials in a clean, structured table using `tabulate`.
 *  **PyQt6 Desktop UI** – Login, signup, vault search, add, copy, delete, and logout workflows.
 *  **Windows EXE** – A standalone packaged application is included for Windows users.
+*  **Password Reveal** – Hover or click a masked password cell to reveal it temporarily.
+*  **Logo Options** – Three logo concepts are available in `media/logo-options/`.
 
 ---
 
@@ -67,13 +69,23 @@ window-close protection that re-encrypts the active vault.
 
 ![PyQt6 password manager interface](media/PasswordManager-PyQt-preview.png)
 
+### Logo concepts
+
+Choose an option for future branded releases:
+
+| Option | Preview | Style |
+| --- | --- | --- |
+| 1 | ![Shield logo](media/logo-options/option-1-shield.png) | Blue security shield |
+| 2 | ![Vault logo](media/logo-options/option-2-vault.png) | Amber vault dial |
+| 3 | ![Key logo](media/logo-options/option-3-key.png) | Dark modern key |
+
 ### Windows executable
 
-A standalone release is available at:
+A release is available in `dist/`:
 
-```text
-dist/PasswordManager.exe
-```
+* `dist/PasswordManager.exe` - earlier portable build
+* `dist/PasswordManager-v1.1.0.exe` - current portable build
+* `dist/PasswordManager-Setup-v1.1.0.exe` - current Windows installer
 
 No Python installation is required to run the EXE. On first launch, the application
 creates `data.csv` in the executable's working directory and creates a local vault
