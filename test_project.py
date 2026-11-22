@@ -57,11 +57,12 @@ class GuiCrashTests(unittest.TestCase):
         cls.app = QApplication.instance() or QApplication([])
 
     def test_password_is_masked_with_user_role_secret(self):
-        window = pyqt_gui.PasswordManagerWindow()
         with tempfile.TemporaryDirectory() as directory:
             old_cwd = os.getcwd()
             os.chdir(directory)
             try:
+                with patch.object(pyqt_gui.PasswordManagerWindow, "_create_data_file"):
+                    window = pyqt_gui.PasswordManagerWindow()
                 window.current_user = "sample"
                 window.current_password = "secret"
                 with open("sample.csv", "w", newline="", encoding="utf-8") as vault:
