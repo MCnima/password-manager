@@ -4,7 +4,7 @@ import os
 import tempfile
 from unittest.mock import patch
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QLineEdit
 import pyqt_gui
 import project
 
@@ -55,6 +55,15 @@ class GuiCrashTests(unittest.TestCase):
     def setUpClass(cls):
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
         cls.app = QApplication.instance() or QApplication([])
+
+    def test_add_password_field_is_visible_but_login_is_masked(self):
+        dialog = pyqt_gui.PasswordDialog()
+        with patch.object(pyqt_gui.PasswordManagerWindow, "_create_data_file"):
+            window = pyqt_gui.PasswordManagerWindow()
+        self.assertEqual(dialog.password_input.echoMode(), QLineEdit.EchoMode.Normal)
+        self.assertEqual(window.login_password.echoMode(), QLineEdit.EchoMode.Password)
+        dialog.close()
+        window.close()
 
     def test_password_is_masked_with_user_role_secret(self):
         with tempfile.TemporaryDirectory() as directory:

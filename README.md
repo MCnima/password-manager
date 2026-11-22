@@ -16,7 +16,7 @@ locally in encrypted per-user vault files.
 *  **Tabular Display** – View stored credentials in a clean, structured table using `tabulate`.
 *  **PyQt6 Desktop UI** – Login, signup, vault search, add, copy, delete, and logout workflows.
 *  **Windows EXE** – A standalone packaged application is included for Windows users.
-*  **Password Reveal** – Hover or click a masked password cell to reveal it temporarily.
+*  **Password Entry** – The password field in the Add Password dialog is visible; login, signup, and vault password cells remain masked.
 *  **Logo Options** – Three logo concepts are available in `media/logo-options/`.
 
 ---
@@ -83,9 +83,11 @@ Choose an option for future branded releases:
 
 A release is available in `dist/`:
 
-* `dist/PasswordManager.exe` - earlier portable build
-* `dist/PasswordManager-v1.1.0.exe` - current portable build
-* `dist/PasswordManager-Setup-v1.1.0.exe` - current Windows installer
+* `dist/PasswordManager.exe` - legacy portable build
+* `dist/PasswordManager-v1.1.0.exe` - earlier portable build
+* `dist/PasswordManager-Setup-v1.1.0.exe` - earlier Windows installer
+* `dist/PasswordManager-v1.1.1.exe` - current portable build
+* `dist/PasswordManager-Setup-v1.1.1.exe` - current Windows installer
 
 No Python installation is required to run the EXE. On first launch, the application
 creates `data.csv` in the executable's working directory and creates a local vault
@@ -170,6 +172,13 @@ If decryption fails, the file remains encrypted and the session does not attempt
 ---
 
 ## What Changed
+
+### Password visibility scope
+
+Only the password text box in the **Add Password** dialog is intentionally visible
+while it is being entered or generated. Login passwords, signup confirmation fields,
+and stored passwords in the vault table remain masked. The vault table does not use
+hover or click reveal behavior.
 
 ### Security and exit handling
 
