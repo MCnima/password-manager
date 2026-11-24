@@ -1,6 +1,8 @@
 This project has not been written by A.I.
 # Project – Python Password Manager
 
+This project is licensed under the [MIT License](LICENSE).
+
 **Project** is a secure, lightweight password manager built with Python. It provides a
 PyQt6 desktop interface and an optional command-line interface, with passwords stored
 locally in encrypted per-user vault files.
