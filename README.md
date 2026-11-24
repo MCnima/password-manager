@@ -17,7 +17,6 @@ locally in encrypted per-user vault files.
 *  **PyQt6 Desktop UI** – Login, signup, vault search, add, copy, delete, and logout workflows.
 *  **Windows EXE** – A standalone packaged application is included for Windows users.
 *  **Password Entry** – The password field in the Add Password dialog is visible; login, signup, and vault password cells remain masked.
-*  **Logo Options** – Three logo concepts are available in `media/logo-options/`.
 
 ---
 
@@ -68,16 +67,6 @@ password generation, credential creation, clipboard copying, logout, and
 window-close protection that re-encrypts the active vault.
 
 ![PyQt6 password manager interface](media/PasswordManager-PyQt-preview.png)
-
-### Logo concepts
-
-Choose an option for future branded releases:
-
-| Option | Preview | Style |
-| --- | --- | --- |
-| 1 | ![Shield logo](media/logo-options/option-1-shield.png) | Blue security shield |
-| 2 | ![Vault logo](media/logo-options/option-2-vault.png) | Amber vault dial |
-| 3 | ![Key logo](media/logo-options/option-3-key.png) | Dark modern key |
 
 ### Windows executable
 
