@@ -3,10 +3,11 @@ import os
 import secrets
 import string
 import sys
+from pathlib import Path
 
 from cryptography.fernet import InvalidToken
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QFont
+from PyQt6.QtGui import QAction, QFont, QIcon
 from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
@@ -26,6 +27,11 @@ from PyQt6.QtWidgets import (
 )
 
 import project
+
+
+def app_asset_path(filename):
+    bundle_dir = getattr(sys, "_MEIPASS", str(Path(__file__).resolve().parent))
+    return str(Path(bundle_dir) / "media" / filename)
 
 
 class PasswordDialog(QDialog):
@@ -77,6 +83,7 @@ class PasswordManagerWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Vault - Password Manager")
+        self.setWindowIcon(QIcon(app_asset_path("app_icon.ico")))
         self.resize(980, 620)
         self.current_user = None
         self.current_password = None
@@ -374,6 +381,7 @@ class PasswordManagerWindow(QMainWindow):
 def launch():
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
+    app.setWindowIcon(QIcon(app_asset_path("app_icon.ico")))
     window = PasswordManagerWindow()
     window.show()
     sys.exit(app.exec())

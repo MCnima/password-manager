@@ -17,6 +17,7 @@ locally in encrypted per-user vault files.
 *  **PyQt6 Desktop UI** – Login, signup, vault search, add, copy, delete, and logout workflows.
 *  **Windows EXE** – A standalone packaged application is included for Windows users.
 *  **Password Entry** – The password field in the Add Password dialog is visible; login, signup, and vault password cells remain masked.
+*  **App Icon** – Uses the selected amber vault dial icon.
 
 ---
 
@@ -72,11 +73,8 @@ window-close protection that re-encrypts the active vault.
 
 A release is available in `dist/`:
 
-* `dist/PasswordManager.exe` - legacy portable build
-* `dist/PasswordManager-v1.1.0.exe` - earlier portable build
-* `dist/PasswordManager-Setup-v1.1.0.exe` - earlier Windows installer
-* `dist/PasswordManager-v1.1.1.exe` - current portable build
-* `dist/PasswordManager-Setup-v1.1.1.exe` - current Windows installer
+* `dist/PasswordManager-v1.1.2.exe` - current portable build
+* `dist/PasswordManager-Setup-v1.1.2.exe` - current Windows installer
 
 No Python installation is required to run the EXE. On first launch, the application
 creates `data.csv` in the executable's working directory and creates a local vault
@@ -86,7 +84,7 @@ To rebuild the executable:
 
 ```bash
 python -m pip install -r requirements.txt
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name PasswordManager --hidden-import pyqt_gui project.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name PasswordManager-v1.1.2 --icon=media/app_icon.ico --add-data "media\app_icon.ico;media" --hidden-import pyqt_gui project.py
 ```
 
 ---
@@ -168,6 +166,12 @@ Only the password text box in the **Add Password** dialog is intentionally visib
 while it is being entered or generated. Login passwords, signup confirmation fields,
 and stored passwords in the vault table remain masked. The vault table does not use
 hover or click reveal behavior.
+
+### Application icon
+
+The app and installer use the selected amber vault dial design stored at
+`media/app_icon.ico`. The PyInstaller build embeds this icon in the executable and
+bundles the ICO for the application window.
 
 ### Security and exit handling
 

@@ -62,6 +62,7 @@ class GuiCrashTests(unittest.TestCase):
             window = pyqt_gui.PasswordManagerWindow()
         self.assertEqual(dialog.password_input.echoMode(), QLineEdit.EchoMode.Normal)
         self.assertEqual(window.login_password.echoMode(), QLineEdit.EchoMode.Password)
+        self.assertFalse(window.windowIcon().isNull())
         dialog.close()
         window.close()
 
